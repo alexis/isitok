@@ -1,0 +1,8 @@
+notifications:
+  delay: 150 # 2.5 min
+telegram:
+  #chat_id: ...
+  #api_id: ...
+sites:
+  example.com:
+    /: GET
