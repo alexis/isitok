@@ -11,4 +11,4 @@ RUN bundle install
 
 COPY . .
 
-ENTRYPOINT ["bundle", "exec", "ruby", "isitok"]
+ENTRYPOINT ["./isitok.rb"]

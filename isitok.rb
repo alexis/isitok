@@ -1,4 +1,4 @@
-#!/bin/local/usr/ruby
+#!/usr/bin/env ruby
 
 require 'yaml'
 require 'bundler'
@@ -8,7 +8,7 @@ String.disable_colorization(true) unless STDOUT.isatty
 LOGGER = Logger.new(STDOUT, level: ENV['DEBUG'] ? :debug : :info)
 
 def reload_config
-  config = YAML.load_file('config.yaml')
+  config = YAML.load_file('isitok.yaml')
   $delay = config['notifications']['delay'] || 150
   $tlgr  = config['telegram'] || {}
   $sites = config['sites'] || {}
