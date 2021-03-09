@@ -4,10 +4,10 @@ sends notifications to a Telegram chat.
 
 ## Usage
 ### With Docker
-Just download [isitok.yaml](isitok.yaml) and modify it as needed. Then run:
+Just download [isitok.yaml](isitok.yaml?raw=1) and modify it as needed. Then run:
 
 ```shell
-docker run --rm -it -v isitok.yaml:/app/isitok.yaml alexisowl/isitok
+docker run --rm -it -v $PWD/isitok.yaml:/app/isitok.yaml alexisowl/isitok
 ```
 
 ### Without Docker
@@ -15,8 +15,7 @@ docker run --rm -it -v isitok.yaml:/app/isitok.yaml alexisowl/isitok
 git clone https://github.com/alexis/isitok.git
 cd isitok
 gem install bundler
-bundle config set path ./vendor
-
-./isitok.rb
-
+bundle config set path ./vendor && bundle
 ```
+
+Modify isitok.yaml as needed an run `./isitok.rb`
