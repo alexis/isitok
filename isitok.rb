@@ -18,6 +18,7 @@ reload_config
 def send_notification(msg)
   LOGGER.debug "Attempting to send message via telegram: #{msg.bold}"
   return unless $tlgr['chat_id']
+  return if ENV['DRYRUN']
 
   LOGGER.debug "Sending message via telegram, chat id: #{$tlgr['chat_id']}"
   Typhoeus.post("https://api.telegram.org/bot#{$tlgr['api_id']}/sendMessage", body: {
