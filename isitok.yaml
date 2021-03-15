@@ -4,5 +4,8 @@ telegram:
   #chat_id: ...
   #api_id: ...
 sites:
-  example.com:
-    /: GET
+  example.com: /
+#custom_checks:
+#  example.com:
+#    /some_page:
+#      http_code: 404

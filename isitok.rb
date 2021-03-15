@@ -11,7 +11,8 @@ def reload_config
   config = YAML.load_file('isitok.yaml')
   $delay = config['notifications']['delay'] || 150
   $tlgr  = config['telegram'] || {}
-  $sites = config['sites'] || {}
+  $sites = (config['sites'] || {}).transform_values { |val| {val => nil} }
+  $sites.deep_merge!(config['custom_checks'] || {})
 end
 reload_config
 
@@ -26,6 +27,17 @@ def send_notification(msg)
     parse_mode: 'markdown',
     text: msg
   })
+end
+
+def ok?(url, check)
+  check ||= {'http_code' => '2\d\d'}
+  http_code_re = /\A(#{check['http_code']})\z/
+
+  resp = Typhoeus.get(url)
+  result = resp.code.to_s.match?(http_code_re)
+
+  LOGGER.info "GET #{url} => #{resp.code}: " + (result ? 'OK'.green : 'FAILED'.red)
+  result
 end
 
 def shut_down
@@ -43,25 +55,22 @@ prev_problems = {}
 while true
   current_problems = {}
   $sites.each do |site, paths|
+    paths ||= ['/']
     paths.each do |path, check|
-      if check == 'GET'
-        url = 'https://' + site + path
-        resp = Typhoeus.get(url)
-        LOGGER.info "GET #{url} " + (resp.success? ? 'OK'.green : 'FAILED'.red)
-        if ! resp.success?
-          send_notification("Failed GET #{url}") unless prev_problems[site + path]
-          current_problems[site + path] = true
-        end
-      else
-        fail
+      url = Addressable::URI.heuristic_parse(site + path, scheme: 'https')
+
+      unless ok?(url, check)
+        send_notification("Failed GET #{url}") unless prev_problems[url.to_s]
+        current_problems[url.to_s] = true
       end
     end
-
-    if prev_problems.values.any? && ! current_problems.values.any?
-      send_notification("*All availability checks pass*\nActive checks: #{$sites.keys.to_sentence}")
-    end
-    prev_problems = current_problems
   end
+
+  if prev_problems.values.any? && ! current_problems.values.any?
+    binding.pry
+    send_notification("*All availability checks pass*\nActive checks: #{$sites.keys.to_sentence}")
+  end
+  prev_problems = current_problems
 
   sleep $delay
   reload_config
