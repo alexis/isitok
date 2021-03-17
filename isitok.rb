@@ -7,15 +7,6 @@ Bundler.require(:default)
 String.disable_colorization(true) unless STDOUT.isatty
 LOGGER = Logger.new(STDOUT, level: ENV['DEBUG'] ? :debug : :info)
 
-def reload_config
-  config = YAML.load_file('isitok.yaml')
-  $delay = config['notifications']['delay'] || 150
-  $tlgr  = config['telegram'] || {}
-  $sites = (config['sites'] || {}).transform_values { |val| {val => nil} }
-  $sites.deep_merge!(config['custom_checks'] || {})
-end
-reload_config
-
 def send_notification(msg)
   LOGGER.debug "Attempting to send message via telegram: #{msg.bold}"
   return unless $tlgr['chat_id']
@@ -27,6 +18,20 @@ def send_notification(msg)
     parse_mode: 'markdown',
     text: msg
   })
+end
+
+def reload_config
+  old_config, $config = $config, YAML.load_file('isitok.yaml')
+  $delay = $config['notifications']['delay'] || 150
+  $tlgr  = $config['telegram'] || {}
+  $sites = ($config['sites'] || {}).transform_values { |val| {val => nil} }
+  $sites.deep_merge!($config['custom_checks'] || {})
+
+  if old_config.blank?
+    send_notification("*Availability notification is ON*\nActive checks: #{$sites.keys.to_sentence}")
+  elsif old_config != $config
+    send_notification("*Configuration changed*\nActive checks: #{$sites.keys.to_sentence}")
+  end
 end
 
 def ok?(url, check)
@@ -49,7 +54,7 @@ end
 Signal.trap("INT")  { shut_down }
 Signal.trap("TERM") { shut_down }
 
-send_notification("*Availability notification is ON*\nActive checks: #{$sites.keys.to_sentence}")
+reload_config
 
 prev_problems = {}
 while true
