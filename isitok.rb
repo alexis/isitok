@@ -72,7 +72,6 @@ while true
   end
 
   if prev_problems.values.any? && ! current_problems.values.any?
-    binding.pry
     send_notification("*All availability checks pass*\nActive checks: #{$sites.keys.to_sentence}")
   end
   prev_problems = current_problems
