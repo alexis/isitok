@@ -72,7 +72,7 @@ while true
   end
 
   if prev_problems.values.any? && ! current_problems.values.any?
-    send_notification("*All availability checks pass*\nActive checks: #{$sites.keys.to_sentence}")
+    send_notification("*All availability checks pass*")
   end
   prev_problems = current_problems
 
