@@ -11,17 +11,19 @@ docker run --rm -it -v $PWD/isitok.yaml:/app/isitok.yaml alexisowl/isitok
 ```
 
 ### Without Docker
-```shell
-git clone https://github.com/alexis/isitok.git
-cd isitok
-gem install bundler
-bundle config set path ./vendor && bundle
-```
+Of course, it's just a little ruby script, with a Gemfile, so feel free to clone the repo,
+install dependencies, modify `isitok.yaml' and start it with `./isitok.rb`.
 
-Now modify `isitok.yaml` as needed an run `./isitok.rb`
+I recommend installing dependecies in a local directory to avoid poluting your system gems:
+
+```shell
+bundle config set path ./vendor
+bundle install
+```
 
 ## Configuration
 ```yaml
+# isitok.yaml
 notifications:
   delay: 150 # 2.5 min
 telegram:
