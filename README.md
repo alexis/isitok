@@ -12,7 +12,7 @@ docker run --rm -it -v $PWD/isitok.yaml:/app/isitok.yaml alexisowl/isitok
 
 ### Without Docker
 Of course, it's just a little ruby script, with a Gemfile, so feel free to clone the repo,
-install dependencies, modify `isitok.yaml' and start it with `./isitok.rb`.
+install dependencies, modify `isitok.yaml` and start it with `./isitok.rb`.
 
 I recommend installing dependecies in a local directory to avoid poluting your system gems:
 
