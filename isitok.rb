@@ -8,30 +8,36 @@ String.disable_colorization(true) unless STDOUT.isatty
 LOGGER = Logger.new(STDOUT, level: ENV['DEBUG'] ? :debug : :info)
 
 def send_notification(msg)
-  LOGGER.debug "Attempting to send message via telegram: #{msg.bold}"
-  return unless $tlgr['chat_id']
+  LOGGER.debug "Preparing to send message via telegram: #{msg.bold}"
+  return unless $chat_id
   return if ENV['DRYRUN']
 
-  LOGGER.debug "Sending message via telegram, chat id: #{$tlgr['chat_id']}"
-  Typhoeus.post("https://api.telegram.org/bot#{$tlgr['api_token']}/sendMessage", body: {
-    chat_id: $tlgr['chat_id'],
+  LOGGER.debug "Sending message via telegram, chat id: #{$chat_id}"
+  Typhoeus.post("https://api.telegram.org/bot#{$api_token}/sendMessage", body: {
+    chat_id: $chat_id,
     parse_mode: 'markdown',
     text: msg
   })
 end
 
-def reload_config
-  old_config, $config = $config, YAML.load_file('isitok.yaml')
-  $delay = $config['notifications']['delay'] || 150
-  $tlgr  = $config['telegram'] || {}
-  $sites = ($config['sites'] || {}).transform_values { |val| {val => nil} }
-  $sites.deep_merge!($config['custom_checks'] || {})
-
-  if old_config.blank? && ! ENV['SKIP_GREETING']
+def notify_on_config_change(old_config)
+  if old_config.blank?
+    return if ENV['SKIP_GREETING']
     send_notification("*Availability notification is ON*\nActive checks: #{$sites.keys.to_sentence}")
   elsif old_config != $config
     send_notification("*Configuration changed*\nActive checks: #{$sites.keys.to_sentence}")
   end
+end
+
+def reload_config
+  old_config, $config = $config, YAML.load_file('isitok.yaml')
+  $delay = $config.dig('notifications', 'delay') || 150
+  $api_token  = $config.dig('telegram', 'api_token')
+  $chat_id  = $config.dig('telegram', 'chat_id')
+  $sites = ($config['sites'] || {}).transform_values { |val| {val => nil} }
+  $sites.deep_merge!($config['custom_checks'] || {})
+
+  notify_on_config_change(old_config)
 end
 
 def ok?(url, check)
