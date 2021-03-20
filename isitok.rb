@@ -27,7 +27,7 @@ def reload_config
   $sites = ($config['sites'] || {}).transform_values { |val| {val => nil} }
   $sites.deep_merge!($config['custom_checks'] || {})
 
-  if old_config.blank? && ! ENV[SKIP_GREETING]
+  if old_config.blank? && ! ENV['SKIP_GREETING']
     send_notification("*Availability notification is ON*\nActive checks: #{$sites.keys.to_sentence}")
   elsif old_config != $config
     send_notification("*Configuration changed*\nActive checks: #{$sites.keys.to_sentence}")
