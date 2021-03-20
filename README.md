@@ -25,15 +25,15 @@ bundle install
 ```yaml
 # isitok.yaml
 notifications:
-  delay: 150 # 2.5 min
+  delay: 300 # wait 5 mins between cycles
 telegram:
   api_token: 1XXXXXXXXX:AXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   chat_id: -1001XXXXXXXXX
 sites:
   example.com: / # check availability of https://example.com/
-  example.com: /page.html # check availability of https://example.com/page.html
-  http://example.com: / # https by default
-  https://user:password@example.com: / # simple authentication (WILL BE VISIBLE IN NOTIFICATIONS!)
+  example.net: /page.html # check availability of https://example.com/page.html
+  http://example.com: / # http scheme
+  https://user:password@example.com: / # simple authentication (CONSIDER SECURITY IMPLICATIONS!)
 custom_checks:
   example.com:
     /page:

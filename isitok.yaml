@@ -5,7 +5,7 @@
 # you need to make sure that your editor doesn't change inodes (vim usually does, nano doesn't)
 
 notifications:
-  delay: 150 # 2.5 min
+  delay: 300 # wait 5 mins between cycles
 telegram:
   #api_token: ...
   #chat_id: ...
