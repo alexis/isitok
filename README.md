@@ -27,7 +27,7 @@ bundle install
 notifications:
   delay: 150 # 2.5 min
 telegram:
-  api_id: 1XXXXXXXXX:AXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  api_token: 1XXXXXXXXX:AXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   chat_id: -1001XXXXXXXXX
 sites:
   example.com: / # check availability of https://example.com/

@@ -13,7 +13,7 @@ def send_notification(msg)
   return if ENV['DRYRUN']
 
   LOGGER.debug "Sending message via telegram, chat id: #{$tlgr['chat_id']}"
-  Typhoeus.post("https://api.telegram.org/bot#{$tlgr['api_id']}/sendMessage", body: {
+  Typhoeus.post("https://api.telegram.org/bot#{$tlgr['api_token']}/sendMessage", body: {
     chat_id: $tlgr['chat_id'],
     parse_mode: 'markdown',
     text: msg
@@ -27,7 +27,7 @@ def reload_config
   $sites = ($config['sites'] || {}).transform_values { |val| {val => nil} }
   $sites.deep_merge!($config['custom_checks'] || {})
 
-  if old_config.blank?
+  if old_config.blank? && ! ENV[SKIP_GREETING]
     send_notification("*Availability notification is ON*\nActive checks: #{$sites.keys.to_sentence}")
   elsif old_config != $config
     send_notification("*Configuration changed*\nActive checks: #{$sites.keys.to_sentence}")
