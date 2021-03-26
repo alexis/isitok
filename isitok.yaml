@@ -6,6 +6,7 @@
 
 notifications:
   delay: 300 # wait 5 mins between cycles
+  retries: 0 # number of retries after first failure to filter out random false positives
 telegram:
   #api_token: ...
   #chat_id: ...

@@ -32,6 +32,7 @@ end
 def reload_config
   old_config, $config = $config, YAML.load_file('isitok.yaml')
   $delay = $config.dig('notifications', 'delay') || 150
+  $retries = $config.dig('notifications', 'retries') || 0
   $api_token  = $config.dig('telegram', 'api_token')
   $chat_id  = $config.dig('telegram', 'chat_id')
   $sites = ($config['sites'] || {}).transform_values { |val| {val => nil} }
@@ -44,11 +45,18 @@ def ok?(url, check)
   check ||= {'http_code' => '2\d\d'}
   http_code_re = /\A(#{check['http_code']})\z/
 
-  resp = Typhoeus.get(url)
-  result = resp.code.to_s.match?(http_code_re)
+  good = false
+  tries_left = 1 + $retries
 
-  LOGGER.info "GET #{url} => #{resp.code}: " + (result ? 'OK'.green : 'FAILED'.red)
-  result
+  until good || (tries_left -= 1) < 0
+    resp = Typhoeus.get(url)
+    good = resp.code.to_s.match?(http_code_re)
+
+    LOGGER.debug "GET #{url} => #{resp.code}, #{resp.time}s"
+  end
+
+  LOGGER.info "GET #{url} => #{resp.code}: " + (good ? 'OK'.green : 'FAILED'.red)
+  return good
 end
 
 def shut_down
