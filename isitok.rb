@@ -54,10 +54,10 @@ def ok?(url, check)
     resp = Typhoeus.get(url)
     good = resp.code.to_s.match?(http_code_re)
 
-    LOGGER.debug "GET #{url} => #{resp.code}, #{resp.time}s"
+    LOGGER.debug "GET #{url} => #{resp.code}, #{(resp.time * 1000).round.to_s.colorize(resp.time > 5 ? :yellow : :default)}ms"
   end
 
-  LOGGER.info "GET #{url} => #{resp.code}: " + (good ? 'OK'.green : 'FAILED'.red)
+  LOGGER.info "GET #{url}: " + (good ? 'OK'.green : 'FAILED'.red)
   return good
 end
 
