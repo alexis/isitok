@@ -48,5 +48,5 @@ Create your bot with [botfather](https://t.me/botfather) and get the access toke
 
 ### Your `chat_id`
 
-There's no single standard way to get your chat ID, but many well [known](https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35)
+There's no single standard way to get your chat ID, but there are many well [known](https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35)
 [work](https://stackoverflow.com/a/32572159/786948) [arounds](https://stackoverflow.com/a/46247058/786948).
