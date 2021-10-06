@@ -10,6 +10,8 @@ LOGGER = Logger.new(STDOUT, level: ENV['DEBUG'] ? :debug : :info)
 def send_notification(msg)
   LOGGER.debug "Preparing to send message via telegram: #{msg.bold}"
   return unless $chat_id
+
+  $last_notification_at = Time.now
   return if ENV['DRYRUN']
 
   LOGGER.debug "Sending message via telegram, chat id: #{$chat_id}"
@@ -69,6 +71,7 @@ Signal.trap("INT")  { shut_down }
 Signal.trap("TERM") { shut_down }
 
 reload_config
+$last_notification_at = Time.now
 
 prev_problems = {}
 while true
@@ -89,6 +92,10 @@ while true
     send_notification("*All availability checks pass*")
   end
   prev_problems = current_problems
+
+  if $last_notification_at < 5.days.ago
+    send_notification("*I was quite for quite some time, but I'm still up*")
+  end
 
   sleep $delay
   reload_config
