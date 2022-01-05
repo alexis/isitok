@@ -94,7 +94,7 @@ while true
   prev_problems = current_problems
 
   if $last_notification_at < 5.days.ago
-    send_notification("*I was quite for quite some time, but I'm still up*")
+    send_notification("I was quiet for quite a while — but I'm still up running.")
   end
 
   sleep $delay
